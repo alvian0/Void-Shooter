@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    public float Speed = 5, jumpHeight = 10, GroundCheckDistance = 0.1f, bulletSpeed = 5;
+    public float Speed = 5, jumpHeight = 10, GroundCheckDistance = 0.1f;
     public GameObject weapon, bullet;
     public GameObject GroundCheck;
     public LayerMask WhatIsGround;
     public Transform muzzle;
     public float FireRate = 15f;
+    public float HP = 100;
+    public float Demage = 2f;
 
     float NextTimeToShoot;
     Animator anim;
@@ -50,10 +52,22 @@ public class PlayerControl : MonoBehaviour
             Shoot();
         }
 
-        WeapoRotation();
+        if (transform.position.y <= -10)
+        {
+            transform.position = new Vector3(0, 0, 0);
+            HP -= 10;
+            return;
+        }
+
+        WeaponRotation();
+    }
+    private void FixedUpdate()
+    {
+        float MoveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(MoveInput * Speed, rb.velocity.y);
     }
 
-    void WeapoRotation()
+    void WeaponRotation()
     {
         Vector3 mousePos = Input.mousePosition;
         mousePos.z = -10f;
@@ -70,12 +84,7 @@ public class PlayerControl : MonoBehaviour
     {
         GameObject bull = Instantiate(bullet, muzzle.position, Quaternion.identity);
         bull.GetComponent<bullets>().target = muzzle.up * 100;
-    }
-
-    private void FixedUpdate()
-    {
-        float MoveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(MoveInput * Speed, rb.velocity.y);
+        bull.GetComponent<bullets>().Demage = Demage;
     }
 
     private void OnDrawGizmosSelected()
