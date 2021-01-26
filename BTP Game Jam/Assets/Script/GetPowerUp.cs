@@ -51,5 +51,7 @@ public class GetPowerUp : MonoBehaviour
         {
             transform.parent.GetChild(i).GetComponent<GetPowerUp>().Start();
         }
+
+        Time.timeScale = 1f;
     }
 }

@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject Spawner, PowerUpChoice;
     public PowerUp[] powerups;
     public float PowerUpChoosingTime = 3f;
+    public Texture2D cursor;
 
     bool IsChoosingPower = false;
     float ChoosingTime;
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
     {
         ChoosingTime = PowerUpChoosingTime;
         HpBar.maxValue = Player.GetComponent<PlayerControl>().HP;
+        Cursor.SetCursor(cursor, new Vector2(cursor.width / 2, cursor.height / 2), CursorMode.Auto);
     }
 
     void Update()
@@ -39,12 +41,16 @@ public class GameManager : MonoBehaviour
             if (ChoosingTime <= 0)
             {
                 PowerUpChoice.SetActive(false);
+                Time.timeScale = 1f;
+                Time.fixedDeltaTime = 0.02f;
                 IsChoosingPower = false;
                 return;
             }
 
             else
             {
+                Time.timeScale = 0.2f;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 ChoosingTime -= Time.deltaTime;
             }
         }

@@ -12,6 +12,7 @@ public class Enemy2 : MonoBehaviour
     public float Demage = 5;
     public GameObject bullets, weapon;
     public Transform muzzle;
+    public float HP = 15;
 
     float NextTimeToShoot;
     Vector3 offsets;
@@ -20,35 +21,39 @@ public class Enemy2 : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         offsets = offset;
         NextTimeToShoot = timeToShoot;
+        transform.position = new Vector2(transform.position.x, 10);
     }
 
     void FixedUpdate()
     {
-        transform.position = Vector2.MoveTowards(transform.position, player.position + offsets, Speed * Time.fixedDeltaTime);
-
-        rotateTowardPlayer();
-
-        if (transform.position.x >= player.position.x)
+        if (player != null)
         {
-            offsets.x = -offset.x;
-        }
+            transform.position = Vector2.MoveTowards(transform.position, player.position + offsets, Speed * Time.fixedDeltaTime);
 
-        else if (transform.position.x <= player.position.x)
-        {
-            offsets.x = offset.x;
-        }
+            rotateTowardPlayer();
 
-        if (NextTimeToShoot <= 0)
-        {
-            GameObject bull = Instantiate(bullets, muzzle.position, Quaternion.identity);
-            bull.GetComponent<bullets>().Demage = 5;
-            bull.GetComponent<bullets>().target = -muzzle.up * 100;
-            NextTimeToShoot = timeToShoot;
-        }
+            if (transform.position.x >= player.position.x)
+            {
+                offsets.x = -offset.x;
+            }
 
-        else
-        {
-            NextTimeToShoot -= Time.deltaTime;
+            else if (transform.position.x <= player.position.x)
+            {
+                offsets.x = offset.x;
+            }
+
+            if (NextTimeToShoot <= 0)
+            {
+                GameObject bull = Instantiate(bullets, muzzle.position, Quaternion.identity);
+                bull.GetComponent<bullets>().Demage = 5;
+                bull.GetComponent<bullets>().target = -muzzle.up * 100;
+                NextTimeToShoot = timeToShoot;
+            }
+
+            else
+            {
+                NextTimeToShoot -= Time.deltaTime;
+            }
         }
     }
 

@@ -1,28 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
-public class bullets : MonoBehaviour
+public class PlayerBullets : MonoBehaviour
 {
     public Vector2 target;
     public float Speed = 5;
     public float Demage;
-    public bool IsShootedByBoss = false;
-    CircleCollider2D coll;
+    public GameObject BulletsEffect;
+    public LayerMask Ground;
 
+    BoxCollider2D coll;
     float DestroyByTime = 3f;
     float DestroyTime;
 
     private void Start()
     {
         DestroyTime = DestroyByTime;
-        coll = GetComponent<CircleCollider2D>();
+        coll = GetComponent<BoxCollider2D>();
+        Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>(), coll);
     }
     void Update()
     {
-
-        transform.position = Vector2.MoveTowards(transform.position, target, Speed * Time.deltaTime);
+        if (GameObject.FindGameObjectWithTag("Player") != null)
+        {
+            Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>(), coll);
+        }
 
         if (DestroyTime <= 0)
         {
@@ -37,15 +40,7 @@ public class bullets : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
-        {
-            collision.gameObject.GetComponent<PlayerControl>().HP -= Demage;
-
-            if (HPCheck())
-            {
-                GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().PowerUpsPick();
-            }
-        }
+        Instantiate(BulletsEffect, transform.position, Quaternion.identity);
 
         if (collision.gameObject.tag == "Enemy2")
         {
@@ -60,11 +55,16 @@ public class bullets : MonoBehaviour
             Destroy(gameObject);
         }
 
-        Destroy(gameObject);
+        if (collision.gameObject.tag == "Ground")
+        {
+            Destroy(gameObject);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        Instantiate(BulletsEffect, transform.position, Quaternion.identity);
+
         if (collision.tag == "Enemy")
         {
             collision.gameObject.transform.GetChild(0).GetComponent<EnemyHPBar>().HpBar.transform.gameObject.SetActive(true);
@@ -80,34 +80,8 @@ public class bullets : MonoBehaviour
 
         if (collision.tag == "Boss")
         {
-            if (IsShootedByBoss)
-            {
-                Physics2D.IgnoreCollision(collision, coll);
-            }
-            else
-            {
-                collision.gameObject.GetComponent<Boss>().HP -= Demage;
-                Destroy(gameObject);
-            }
-        }        
-    }
-
-    bool HPCheck()
-    {
-        float[] i = { 90, 80, 70, 60, 50, 40, 30, 20, 10 };
-        bool j;
-        PlayerControl pcontrol = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControl>();
-
-        if (i.Contains(pcontrol.HP))
-        {
-            j = true;
+            collision.gameObject.GetComponent<Boss>().HP -= Demage;
+            Destroy(gameObject);
         }
-
-        else
-        {
-            j = false;
-        }
-
-        return j;
     }
 }

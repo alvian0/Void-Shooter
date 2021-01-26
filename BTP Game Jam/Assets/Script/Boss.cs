@@ -39,11 +39,14 @@ public class Boss : MonoBehaviour
 
         if (ShootAttack <= 0 && IsIdle)
         {
-            GameObject bull = Instantiate(bullets, transform.position, Quaternion.identity);
-            bull.GetComponent<bullets>().Demage = demage;
-            bull.GetComponent<bullets>().target = player.transform.position.normalized * 100;
-            bull.GetComponent<bullets>().IsShootedByBoss = true;
-            ShootAttack = AttackSpeed;
+            if (player != null)
+            {
+                GameObject bull = Instantiate(bullets, transform.position, Quaternion.identity);
+                bull.GetComponent<bullets>().Demage = demage;
+                bull.GetComponent<bullets>().target = player.transform.position.normalized * 100;
+                bull.GetComponent<bullets>().IsShootedByBoss = true;
+                ShootAttack = AttackSpeed;
+            }
         }
 
         else

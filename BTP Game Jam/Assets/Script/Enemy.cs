@@ -22,12 +22,13 @@ public class Enemy : MonoBehaviour
     {
         if (HP <= 5)
         {
-            CurrentSpeed = Speed * 2;
+            CurrentSpeed = Speed * 1.5f;
         }
 
         if (playerpos != null)
         {
             transform.position = Vector2.MoveTowards(transform.position, playerpos.transform.position, CurrentSpeed * Time.deltaTime);
+            rotateToPlayer();
         }
     }
 
@@ -50,6 +51,13 @@ public class Enemy : MonoBehaviour
 
             Destroy(gameObject);
         }
+    }
+
+    void rotateToPlayer()
+    {
+        Vector3 pos = transform.position - playerpos.position;
+        float angle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg + 90;
+        transform.GetChild(1).transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
     bool HPCheck()

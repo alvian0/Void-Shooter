@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -12,7 +13,12 @@ public class PlayerControl : MonoBehaviour
     public float FireRate = 15f;
     public float HP = 100;
     public float Demage = 2f;
+    public float bulletSpeed = 30;
+    public int JumpCount = 2;
+    public GameObject JumpEffect;
+    public GameObject TrailRender;
 
+    int Jump;
     float NextTimeToShoot;
     Animator anim;
     Rigidbody2D rb;
@@ -28,22 +34,16 @@ public class PlayerControl : MonoBehaviour
     {
         IsGround = Physics2D.OverlapCircle(GroundCheck.transform.position, GroundCheckDistance, WhatIsGround);
 
+        if (IsGround) Jump = JumpCount;
+
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            if (IsGround)
+            if (Jump >= 1)
             {
                 rb.velocity = Vector2.up * jumpHeight;
+                Instantiate(JumpEffect, GroundCheck.transform.position, Quaternion.identity);
+                Jump--;
             }
-        }
-
-        if (Input.GetAxisRaw("Horizontal") == 1)
-        {
-            transform.localScale = new Vector3(1,1,1);
-        }
-
-        else if (Input.GetAxisRaw("Horizontal") == -1)
-        {
-            transform.localScale = new Vector3(-1,1,1);
         }
 
         if (Input.GetMouseButton(0) && Time.time >= NextTimeToShoot)
@@ -56,7 +56,13 @@ public class PlayerControl : MonoBehaviour
         {
             transform.position = new Vector3(0, 0, 0);
             HP -= 10;
+            TrailRender.SetActive(false);
             return;
+        }
+
+        if (transform.position.y > -10)
+        {
+            TrailRender.SetActive(true);
         }
 
         WeaponRotation();
@@ -82,14 +88,22 @@ public class PlayerControl : MonoBehaviour
 
     void Shoot()
     {
-        GameObject bull = Instantiate(bullet, muzzle.position, Quaternion.identity);
-        bull.GetComponent<bullets>().target = muzzle.up * 100;
-        bull.GetComponent<bullets>().Demage = Demage;
+        GameObject bull = Instantiate(bullet, muzzle.position, muzzle.rotation);
+        bull.GetComponent<Rigidbody2D>().AddForce(muzzle.up * bulletSpeed, ForceMode2D.Impulse);
+        bull.GetComponent<PlayerBullets>().Demage = Demage;
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(GroundCheck.transform.position, GroundCheckDistance);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            Instantiate(JumpEffect, GroundCheck.transform.position, Quaternion.identity);
+        }
     }
 }

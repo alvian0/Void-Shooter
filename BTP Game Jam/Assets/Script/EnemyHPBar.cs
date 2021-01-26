@@ -7,18 +7,34 @@ public class EnemyHPBar : MonoBehaviour
 {
     public Slider HpBar;
     public Vector3 offset;
+    public int index = 1;
 
     float Hp;
 
     private void Start()
     {
-        Hp = transform.parent.gameObject.GetComponent<Enemy>().HP;
+        check();
+
         HpBar.maxValue = Hp;
     }
     void Update()
     {
-        Hp = transform.parent.gameObject.GetComponent<Enemy>().HP;
+        check();
+
         HpBar.transform.position = transform.parent.position + offset;
         HpBar.value = Hp;
+    }
+
+    void check()
+    {
+        if (index == 1)
+        {
+            Hp = transform.parent.gameObject.GetComponent<Enemy>().HP;
+        }
+
+        else if (index == 2)
+        {
+            Hp = transform.parent.gameObject.GetComponent<Enemy2>().HP;
+        }
     }
 }
