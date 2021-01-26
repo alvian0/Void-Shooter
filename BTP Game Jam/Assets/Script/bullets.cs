@@ -40,6 +40,8 @@ public class bullets : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             collision.gameObject.GetComponent<PlayerControl>().HP -= Demage;
+            Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+            GameObject.Find("PHurt").GetComponent<AudioSource>().Play();
 
             if (HPCheck())
             {
@@ -47,49 +49,12 @@ public class bullets : MonoBehaviour
             }
         }
 
-        if (collision.gameObject.tag == "Enemy2")
-        {
-            collision.gameObject.transform.GetChild(0).GetComponent<EnemyHPBar>().HpBar.transform.gameObject.SetActive(true);
-            collision.gameObject.GetComponent<Enemy2>().HP -= Demage;
-
-            if (collision.gameObject.GetComponent<Enemy2>().HP <= 0)
-            {
-                Destroy(collision.gameObject);
-            }
-
-            Destroy(gameObject);
-        }
-
         Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Enemy")
-        {
-            collision.gameObject.transform.GetChild(0).GetComponent<EnemyHPBar>().HpBar.transform.gameObject.SetActive(true);
-            collision.gameObject.GetComponent<Enemy>().HP -= Demage;
-
-            if (collision.gameObject.GetComponent<Enemy>().HP <= 0)
-            {
-                Destroy(collision.gameObject);
-            }
-
-            Destroy(gameObject);
-        }
-
-        if (collision.tag == "Boss")
-        {
-            if (IsShootedByBoss)
-            {
-                Physics2D.IgnoreCollision(collision, coll);
-            }
-            else
-            {
-                collision.gameObject.GetComponent<Boss>().HP -= Demage;
-                Destroy(gameObject);
-            }
-        }        
+        
     }
 
     bool HPCheck()

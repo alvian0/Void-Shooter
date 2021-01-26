@@ -11,30 +11,18 @@ public class PlayerBullets : MonoBehaviour
     public LayerMask Ground;
 
     BoxCollider2D coll;
-    float DestroyByTime = 3f;
-    float DestroyTime;
 
     private void Start()
     {
-        DestroyTime = DestroyByTime;
         coll = GetComponent<BoxCollider2D>();
         Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>(), coll);
+        Destroy(gameObject, 3f);
     }
     void Update()
     {
         if (GameObject.FindGameObjectWithTag("Player") != null)
         {
             Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Player").GetComponent<BoxCollider2D>(), coll);
-        }
-
-        if (DestroyTime <= 0)
-        {
-            Destroy(gameObject);
-        }
-
-        else
-        {
-            DestroyTime -= Time.deltaTime;
         }
     }
 
@@ -49,8 +37,12 @@ public class PlayerBullets : MonoBehaviour
 
             if (collision.gameObject.GetComponent<Enemy2>().HP <= 0)
             {
+                Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+                GameObject.Find("EDie").GetComponent<AudioSource>().Play();
+                Instantiate(collision.gameObject.GetComponent<Enemy2>().DeadEffect, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject);
             }
+            else GameObject.Find("EHurt").GetComponent<AudioSource>().Play();
 
             Destroy(gameObject);
         }
@@ -72,8 +64,13 @@ public class PlayerBullets : MonoBehaviour
 
             if (collision.gameObject.GetComponent<Enemy>().HP <= 0)
             {
+                Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+                GameObject.Find("EDie").GetComponent<AudioSource>().Play();
+                Instantiate(collision.gameObject.GetComponent<Enemy>().DeadEffect, collision.transform.position, Quaternion.identity);
                 Destroy(collision.gameObject);
             }
+
+            else GameObject.Find("EHurt").GetComponent<AudioSource>().Play();
 
             Destroy(gameObject);
         }

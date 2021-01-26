@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     public float Speed = 5f;
     public float DemageDealt = 10f;
     public float HP = 10;
+    public GameObject DeadEffect;
 
     Transform playerpos;
     float CurrentSpeed;
@@ -45,6 +46,9 @@ public class Enemy : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            Instantiate(DeadEffect, transform.position, Quaternion.identity);
+            Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+            GameObject.Find("PHurt").GetComponent<AudioSource>().Play();
             collision.gameObject.GetComponent<PlayerControl>().HP -= DemageDealt;
             if (HPCheck())
                 GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().PowerUpsPick();

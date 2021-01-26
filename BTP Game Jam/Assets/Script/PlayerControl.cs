@@ -17,12 +17,14 @@ public class PlayerControl : MonoBehaviour
     public int JumpCount = 2;
     public GameObject JumpEffect;
     public GameObject TrailRender;
+    public int TotalAmmo = 60, CurrentAmmo = 30, AmmoCap = 30;
 
     int Jump;
     float NextTimeToShoot;
     Animator anim;
     Rigidbody2D rb;
     bool IsGround;
+    bool IsReloading = false;
 
     void Start()
     {
@@ -36,21 +38,59 @@ public class PlayerControl : MonoBehaviour
 
         if (IsGround) Jump = JumpCount;
 
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x)
+        {
+            weapon.transform.GetChild(0).GetComponent<SpriteRenderer>().flipY = false;
+        }
+
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x)
+        {
+            weapon.transform.GetChild(0).GetComponent<SpriteRenderer>().flipY = true;
+        }
+
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (Jump >= 1)
             {
                 rb.velocity = Vector2.up * jumpHeight;
                 Instantiate(JumpEffect, GroundCheck.transform.position, Quaternion.identity);
+                GameObject.Find("JumpSFX").GetComponent<AudioSource>().Play();
+                anim.SetTrigger("Jump");
                 Jump--;
             }
         }
 
-        if (Input.GetMouseButton(0) && Time.time >= NextTimeToShoot)
+        if (Input.GetMouseButton(0) && Time.time >= NextTimeToShoot && !IsReloading)
         {
             NextTimeToShoot = Time.time + 1f / FireRate;
-            Shoot();
+
+            if (CurrentAmmo > 0)
+            {
+                Shoot();
+                CurrentAmmo--;
+            }
+
+            else
+            {
+                IsReloading = true;
+
+                if (TotalAmmo >= AmmoCap)
+                {
+                    TotalAmmo -= AmmoCap;
+                    CurrentAmmo += AmmoCap;
+                }
+
+                else
+                {
+                    CurrentAmmo = TotalAmmo;
+                    TotalAmmo = 0;
+                }
+                //reload
+                //taking total ammo and add it into current ammo with capammo amount
+            }
         }
+
+
 
         if (transform.position.y <= -10)
         {
@@ -88,6 +128,7 @@ public class PlayerControl : MonoBehaviour
 
     void Shoot()
     {
+        GameObject.Find("ShootSFX").GetComponent<AudioSource>().Play();
         GameObject bull = Instantiate(bullet, muzzle.position, muzzle.rotation);
         bull.GetComponent<Rigidbody2D>().AddForce(muzzle.up * bulletSpeed, ForceMode2D.Impulse);
         bull.GetComponent<PlayerBullets>().Demage = Demage;
@@ -104,6 +145,15 @@ public class PlayerControl : MonoBehaviour
         if (collision.gameObject.tag == "Ground")
         {
             Instantiate(JumpEffect, GroundCheck.transform.position, Quaternion.identity);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Ammo")
+        {
+            TotalAmmo += AmmoCap;
+            Destroy(collision.gameObject);
         }
     }
 }

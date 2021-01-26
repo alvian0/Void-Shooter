@@ -9,6 +9,7 @@ TagManager:
   - Boss
   - Enemy2
   - Ground
+  - Ammo
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - 
   - Ground
   - post
-  - 
+  - Enemy2
   - 
   - 
   - 

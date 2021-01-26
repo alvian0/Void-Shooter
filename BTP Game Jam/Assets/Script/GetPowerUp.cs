@@ -5,53 +5,82 @@ using UnityEngine.UI;
 
 public class GetPowerUp : MonoBehaviour
 {
-    public Text text;
+    public float Demage;
+    public float Hp;
+    public float FireRate;
+    public float Speed;
+    public int Jumps;
 
+    PlayerControl Player;
     GameManager manager;
-    PowerUp powerups;
 
     private void Start()
     {
         manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>();
-        powerups = manager.powerups[Random.Range(0, manager.powerups.Length)];
+        Player = manager.Player.GetComponent<PlayerControl>();
     }
 
-    private void Update()
+    public void DemagePlus(bool Double)
     {
-        if (powerups.HealthPoint <= 0)
+        if (Double)
         {
-            text.text = 
-                "HP " + powerups.HealthPoint.ToString().Replace("-", ("- ")) +
-                "\nDemage + " + powerups.Demage.ToString() + 
-                "\nSpeed + " + powerups.Speed.ToString() +
-                "\nFire rate + " + powerups.FireRate.ToString();
+            Player.Demage += Demage * 2;
+            Player.HP -= Hp;
         }
+
         else
         {
-            text.text = 
-                "HP + " + powerups.HealthPoint.ToString() +
-                "\nDemage + " + powerups.Demage.ToString() + 
-                "\nSpeed + " + powerups.Speed.ToString() +
-                "\nFire rate + " + powerups.FireRate.ToString();
+            Player.Demage += Demage;
         }
-    }
-
-    public void AplyPowerUp()
-    {
-        PlayerControl player = manager.Player.GetComponent<PlayerControl>();
-
-        player.HP += powerups.HealthPoint;
-        player.Demage += powerups.Demage;
-        player.Speed += powerups.Speed;
-        player.FireRate += powerups.FireRate;
 
         manager.PowerUpPicked();
+    }
 
-        for(int i = 0; i < transform.parent.childCount; i++)
+    public void SpeedPlus(bool Double)
+    {
+        if (Double)
         {
-            transform.parent.GetChild(i).GetComponent<GetPowerUp>().Start();
+            Player.Speed += Speed * 2;
+            Player.HP -= Hp;
+        }
+        
+        else
+        {
+            Player.Speed += Speed;
         }
 
-        Time.timeScale = 1f;
+        manager.PowerUpPicked();
+    }
+
+    public void FireRatePlus(bool Double)
+    {
+        if (Double)
+        {
+            Player.FireRate += FireRate * 2;
+            Player.HP -= Hp;
+        }
+
+        else
+        {
+            Player.FireRate += FireRate;
+        }
+
+        manager.PowerUpPicked();
+    }
+
+    public void JumpPlus(bool Double)
+    {
+        if (Double)
+        {
+            Player.JumpCount += Jumps * 2;
+            Player.HP -= Hp;
+        }
+
+        else
+        {
+            Player.JumpCount += Jumps;
+        }
+
+        manager.PowerUpPicked();
     }
 }

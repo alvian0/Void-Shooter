@@ -13,6 +13,8 @@ public class Enemy2 : MonoBehaviour
     public GameObject bullets, weapon;
     public Transform muzzle;
     public float HP = 15;
+    public LayerMask WhatIsGround;
+    public GameObject DeadEffect;
 
     float NextTimeToShoot;
     Vector3 offsets;
@@ -24,12 +26,12 @@ public class Enemy2 : MonoBehaviour
         transform.position = new Vector2(transform.position.x, 10);
     }
 
-    void FixedUpdate()
+    private void Update()
     {
+        Physics2D.IgnoreLayerCollision(10, 8);
+
         if (player != null)
         {
-            transform.position = Vector2.MoveTowards(transform.position, player.position + offsets, Speed * Time.fixedDeltaTime);
-
             rotateTowardPlayer();
 
             if (transform.position.x >= player.position.x)
@@ -54,6 +56,14 @@ public class Enemy2 : MonoBehaviour
             {
                 NextTimeToShoot -= Time.deltaTime;
             }
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (player != null)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, player.position + offsets, Speed * Time.fixedDeltaTime);
         }
     }
 

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3539542491439602667}
   - component: {fileID: 3539542491439602665}
   - component: {fileID: 3539542491439602664}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3539542491542951534}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 3539542491546819818}
   - component: {fileID: 3539542491546819817}
   - component: {fileID: -9018427622981763237}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemy2
   m_TagString: Enemy2
   m_Icon: {fileID: 0}
@@ -215,6 +215,10 @@ MonoBehaviour:
   weapon: {fileID: 3539542491542951521}
   muzzle: {fileID: 3539542492754291159}
   HP: 15
+  WhatIsGround:
+    serializedVersion: 2
+    m_Bits: 256
+  DeadEffect: {fileID: 6925148827833551907, guid: bd7cfc2c7bc52654280f086e88362856, type: 3}
 --- !u!58 &3539542491546819817
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -263,7 +267,7 @@ GameObject:
   - component: {fileID: 3539542491556132548}
   - component: {fileID: 3539542491556132546}
   - component: {fileID: 3539542491556132549}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,7 +341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3539542491569037905}
   - component: {fileID: 3539542491569037918}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -428,7 +432,7 @@ GameObject:
   - component: {fileID: 3539542491598268799}
   - component: {fileID: 3539542491598268798}
   - component: {fileID: 3539542491598268785}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Canvas (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -539,7 +543,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3539542492754291159}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: muzzle
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -570,7 +574,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3539542493414145254}
   - component: {fileID: 3539542493414145255}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -651,7 +655,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3539542493451174720}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
