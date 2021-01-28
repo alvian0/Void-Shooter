@@ -21,7 +21,16 @@ public class EnemyHPBar : MonoBehaviour
     {
         check();
 
-        HpBar.transform.position = transform.parent.position + offset;
+        if (index == 3)
+        {
+            HpBar.transform.position = transform.parent.GetChild(0).transform.position + offset;
+        }
+
+        else
+        {
+            HpBar.transform.position = transform.parent.position + offset;
+        }
+
         HpBar.value = Hp;
     }
 
@@ -35,6 +44,11 @@ public class EnemyHPBar : MonoBehaviour
         else if (index == 2)
         {
             Hp = transform.parent.gameObject.GetComponent<Enemy2>().HP;
+        }
+
+        else if (index == 3)
+        {
+            Hp = transform.parent.GetChild(0).gameObject.GetComponent<Enemy3>().HP;
         }
     }
 }

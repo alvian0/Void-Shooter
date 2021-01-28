@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 
+[System.Serializable]
 public class PlayerControl : MonoBehaviour
 {
     public float Speed = 5, jumpHeight = 10, GroundCheckDistance = 0.1f;
@@ -18,23 +20,40 @@ public class PlayerControl : MonoBehaviour
     public GameObject JumpEffect;
     public GameObject TrailRender;
     public int TotalAmmo = 60, CurrentAmmo = 30, AmmoCap = 30;
+    public float ReloadTime = 2f;
+    public GameObject ReloadIndicator;
+    public Image ReloadBar;
+    public GameObject DashEffect;
+    public int DashCount = 1;
 
+    [SerializeField]
+    bool IsCanDash;
+    [SerializeField]
     int Jump;
+    [SerializeField]
+    int Dash;
     float NextTimeToShoot;
     Animator anim;
     Rigidbody2D rb;
+    [SerializeField]
     bool IsGround;
     bool IsReloading = false;
+    GameManager manager;
+    Vector2 temp;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        manager = GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>();
     }
 
     void Update()
     {
         IsGround = Physics2D.OverlapCircle(GroundCheck.transform.position, GroundCheckDistance, WhatIsGround);
+        IsCanDash = Physics2D.OverlapCircle(GroundCheck.transform.position, GroundCheckDistance, WhatIsGround);
+
+        if (IsCanDash) Dash = DashCount;
 
         if (IsGround) Jump = JumpCount;
 
@@ -48,7 +67,25 @@ public class PlayerControl : MonoBehaviour
             weapon.transform.GetChild(0).GetComponent<SpriteRenderer>().flipY = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (Dash >= 1)
+            {
+                if (Input.GetAxisRaw("Horizontal") == 1)
+                {
+                    StartCoroutine(dash(Vector2.right * 50));
+                }
+
+                else if (Input.GetAxisRaw("Horizontal") == -1)
+                {
+                    StartCoroutine(dash(-Vector2.right * 50));
+                }
+
+                Dash--;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))
         {
             if (Jump >= 1)
             {
@@ -60,8 +97,22 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(KeyCode.R) && !IsReloading && CurrentAmmo < AmmoCap)
+        {
+            if (TotalAmmo > 0)
+            {
+                ReloadBar.fillAmount = 0;
+                IsReloading = true;
+            }
+        }
+
         if (Input.GetMouseButton(0) && Time.time >= NextTimeToShoot && !IsReloading)
         {
+            if (manager.IsChoosingPower)
+            {
+                return;
+            }
+
             NextTimeToShoot = Time.time + 1f / FireRate;
 
             if (CurrentAmmo > 0)
@@ -72,37 +123,52 @@ public class PlayerControl : MonoBehaviour
 
             else
             {
+                ReloadBar.fillAmount = 0;
                 IsReloading = true;
+            }
+        }
 
-                if (TotalAmmo >= AmmoCap)
+        if (IsReloading)
+        {
+            ReloadIndicator.SetActive(true);
+            ReloadBar.fillAmount += Time.deltaTime / ReloadTime;
+
+            if (ReloadBar.fillAmount >= 1)
+            {
+                if (CurrentAmmo >= 0)
                 {
-                    TotalAmmo -= AmmoCap;
-                    CurrentAmmo += AmmoCap;
+                    if (TotalAmmo >= AmmoCap - CurrentAmmo)
+                    {
+                        TotalAmmo -= AmmoCap - CurrentAmmo;
+                        CurrentAmmo += AmmoCap - CurrentAmmo;
+                    }
+
+                    else
+                    {
+                        TotalAmmo -= AmmoCap - CurrentAmmo;
+                        CurrentAmmo += TotalAmmo;
+                    }
                 }
 
                 else
                 {
-                    CurrentAmmo = TotalAmmo;
-                    TotalAmmo = 0;
+                    if (TotalAmmo >= AmmoCap)
+                    {
+                        TotalAmmo -= AmmoCap;
+                        CurrentAmmo += AmmoCap;
+                    }
+
+                    else
+                    {
+                        CurrentAmmo = TotalAmmo;
+                        TotalAmmo = 0;
+                    }
                 }
-                //reload
-                //taking total ammo and add it into current ammo with capammo amount
+
+                ReloadIndicator.SetActive(false);
+                IsReloading = false;
+                return;
             }
-        }
-
-
-
-        if (transform.position.y <= -10)
-        {
-            transform.position = new Vector3(0, 0, 0);
-            HP -= 10;
-            TrailRender.SetActive(false);
-            return;
-        }
-
-        if (transform.position.y > -10)
-        {
-            TrailRender.SetActive(true);
         }
 
         WeaponRotation();
@@ -110,7 +176,7 @@ public class PlayerControl : MonoBehaviour
     private void FixedUpdate()
     {
         float MoveInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(MoveInput * Speed, rb.velocity.y);
+        rb.velocity = new Vector2(temp.x + MoveInput * Speed, rb.velocity.y);
     }
 
     void WeaponRotation()
@@ -150,10 +216,69 @@ public class PlayerControl : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.tag == "Boss")
+        {
+            if (manager.IsChoosingPower)
+            {
+                return;
+            }
+
+            Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+            GameObject.Find("PHurt").GetComponent<AudioSource>().Play();
+            HP -= 5;
+            if (HPCheck())
+                GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().PowerUpsPick();
+        }
+
         if (collision.tag == "Ammo")
         {
-            TotalAmmo += AmmoCap;
-            Destroy(collision.gameObject);
+            if (!IsReloading)
+            {
+                TotalAmmo += AmmoCap;
+                Destroy(collision.gameObject);
+            }
         }
+
+        if (collision.tag == "Enemy3")
+        {
+            if (GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().IsChoosingPower)
+            {
+                return;
+            }
+
+            Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
+            GameObject.Find("PHurt").GetComponent<AudioSource>().Play();
+            HP -= collision.gameObject.GetComponent<Enemy3>().Demage;
+            if (HPCheck())
+                GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().PowerUpsPick();
+        }
+    }
+    bool HPCheck()
+    {
+        float[] i = { 90, 80, 70, 60, 50, 40, 30, 20, 10 };
+        bool j;
+
+        if (i.Contains(HP))
+        {
+            j = true;
+        }
+
+        else
+        {
+            j = false;
+        }
+
+        return j;
+    }
+
+    IEnumerator dash(Vector2 dir)
+    {
+        Instantiate(DashEffect, transform.position, Quaternion.identity);
+        GameObject.Find("JumpSFX").GetComponent<AudioSource>().Play();
+        temp = dir;
+        yield return new WaitForSeconds(.1f);
+        Instantiate(DashEffect, transform.position, Quaternion.identity);
+        GameObject.Find("JumpSFX").GetComponent<AudioSource>().Play();
+        temp = Vector2.zero;
     }
 }

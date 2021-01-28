@@ -46,6 +46,11 @@ public class Enemy : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
+            if (GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().IsChoosingPower)
+            {
+                return;
+            }
+
             Instantiate(DeadEffect, transform.position, Quaternion.identity);
             Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
             GameObject.Find("PHurt").GetComponent<AudioSource>().Play();

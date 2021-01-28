@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviour
     public Slider HpBar;
     public GameObject Player;
     public GameObject Spawner, PowerUpChoice;
-    public PowerUp[] powerups;
     public float PowerUpChoosingTime = 3f;
     public Texture2D cursor;
     public float CountDown = 120;
@@ -17,40 +16,61 @@ public class GameManager : MonoBehaviour
     public GameObject ammo;
     public Image CountDownPickPowerUp;
     public GameObject pauseScreen;
+    public Text PoinText;
+    public int PointEarn = 100;
+    public int EnemyKill;
+    public GameObject GameOverScreen;
+    public Text Score;
+    public GameObject Bossssss;
+    public AudioSource BGM;
+    public float AmmoSpawnTime;
+    public bool IsThereIsABoos = false;
 
-    bool IsChoosingPower = false;
+    int Point;
+    public bool IsChoosingPower = false;
     float ChoosingTime;
     bool IsPaused;
-    float timess;
+    public float timer;
 
     void Start()
     {
+        PlayerPrefs.SetInt("Play", PlayerPrefs.GetInt("Play") + 1);
         Time.timeScale = 1;
-        timess = CountDown;
         ChoosingTime = PowerUpChoosingTime;
         HpBar.maxValue = Player.GetComponent<PlayerControl>().HP;
         Cursor.SetCursor(cursor, new Vector2(cursor.width / 2, cursor.height / 2), CursorMode.Auto);
-        InvokeRepeating("RandomAmmo", 1, 5);
+        InvokeRepeating("RandomAmmo", 1, AmmoSpawnTime);
+        timer = CountDown;
     }
 
     void Update()
     {
-        float timer = Time.time - CountDown;
+        PoinText.text = Point.ToString();
+        Score.text = "Score\n" + Point + "\nEnemy Kill\n" + EnemyKill;
 
-        if (timer <= 0)
+        timer -= Time.deltaTime;
+
+        if (timer >= 0)
         {
-            string minute = ((int)-timer / 60).ToString();
-            string seconds = (-timer % 60).ToString("f2");
+            string minute = ((int)timer / 60).ToString();
+            string seconds = (timer % 60).ToString("f2");
 
             textmesh.text = minute + ":" + seconds;
         }
 
         else
         {
+            if (!IsThereIsABoos)
+            {
+                Instantiate(Bossssss, new Vector2(0, 1.4f), Quaternion.identity);
+                IsThereIsABoos = true;
+                return;
+            }
+
             textmesh.text = "Hello World";
         }
 
-        if(Input.GetKeyDown(KeyCode.Escape))
+        if(Input.GetKeyDown(KeyCode.Escape) && !IsChoosingPower)
         {
             if (!IsPaused)
             {
@@ -72,6 +92,13 @@ public class GameManager : MonoBehaviour
             if (Player.GetComponent<PlayerControl>().HP <= 0)
             {
                 Spawner.SetActive(false);
+                GameOverScreen.SetActive(true);
+
+                if (Point >= PlayerPrefs.GetInt("HS"))
+                {
+                    PlayerPrefs.SetInt("HS", Point);
+                }
+
                 Destroy(Player);
             }
         }
@@ -118,13 +145,15 @@ public class GameManager : MonoBehaviour
         GameObject[] grounds = GameObject.FindGameObjectsWithTag("Ground");
         Transform SpawnPos = grounds[Random.Range(0, grounds.Length)].transform;
         float randomx = Random.Range(-SpawnPos.localScale.x / 2.5f - 1, SpawnPos.localScale.x / 2.5f - 1);
-        Instantiate(ammo, new Vector2(SpawnPos.position.x + randomx, SpawnPos.position.y + 1), Quaternion.identity);
+        float YGetPos = SpawnPos.localScale.y / 2 + .6f;
+        Instantiate(ammo, new Vector2(SpawnPos.position.x + randomx, SpawnPos.position.y + YGetPos), Quaternion.identity);
     }
 
     public void pause()
     {
         pauseScreen.SetActive(true);
         IsPaused = true;
+        BGM.Pause();
         Time.timeScale = 0;
     }
 
@@ -132,11 +161,25 @@ public class GameManager : MonoBehaviour
     {
         pauseScreen.SetActive(false);
         IsPaused = false;
+        BGM.Play();
         Time.timeScale = 1;
     }
 
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void GetPoint(bool ExtraBoss = false)
+    {
+        if (ExtraBoss)
+        {
+            Point += PointEarn * 20;
+        }
+
+        else
+        {
+            Point += PointEarn;
+        }
     }
 }

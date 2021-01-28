@@ -10,6 +10,8 @@ public class GetPowerUp : MonoBehaviour
     public float FireRate;
     public float Speed;
     public int Jumps;
+    public int PointMinus;
+    public int Dash;
 
     PlayerControl Player;
     GameManager manager;
@@ -33,6 +35,7 @@ public class GetPowerUp : MonoBehaviour
             Player.Demage += Demage;
         }
 
+        manager.PointEarn -= PointMinus;
         manager.PowerUpPicked();
     }
 
@@ -49,6 +52,7 @@ public class GetPowerUp : MonoBehaviour
             Player.Speed += Speed;
         }
 
+        manager.PointEarn -= PointMinus;
         manager.PowerUpPicked();
     }
 
@@ -65,6 +69,7 @@ public class GetPowerUp : MonoBehaviour
             Player.FireRate += FireRate;
         }
 
+        manager.PointEarn -= PointMinus;
         manager.PowerUpPicked();
     }
 
@@ -73,14 +78,22 @@ public class GetPowerUp : MonoBehaviour
         if (Double)
         {
             Player.JumpCount += Jumps * 2;
+            Player.DashCount += Dash * 2;
             Player.HP -= Hp;
         }
 
         else
         {
             Player.JumpCount += Jumps;
+            Player.DashCount += Dash;
         }
 
+        manager.PointEarn -= PointMinus;
+        manager.PowerUpPicked();
+    }
+
+    public void Skip()
+    {
         manager.PowerUpPicked();
     }
 }

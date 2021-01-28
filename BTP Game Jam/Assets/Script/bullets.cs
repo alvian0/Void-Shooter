@@ -39,6 +39,11 @@ public class bullets : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            if (GameObject.FindGameObjectWithTag("Manager").GetComponent<GameManager>().IsChoosingPower)
+            {
+                return;
+            }
+
             collision.gameObject.GetComponent<PlayerControl>().HP -= Demage;
             Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
             GameObject.Find("PHurt").GetComponent<AudioSource>().Play();

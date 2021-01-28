@@ -23,7 +23,7 @@ public class Enemy2 : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         offsets = offset;
         NextTimeToShoot = timeToShoot;
-        transform.position = new Vector2(transform.position.x, 10);
+        //transform.position = new Vector2(transform.position.x, 10);
     }
 
     private void Update()
