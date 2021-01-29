@@ -3642,20 +3642,20 @@ MonoBehaviour:
   PowerUpChoice: {fileID: 613546500}
   PowerUpChoosingTime: 1
   cursor: {fileID: 2800000, guid: 90df91dc6c9688b4db0d4388a9719d33, type: 3}
-  CountDown: 90
+  CountDown: 60
   textmesh: {fileID: 1410625006}
   Ammo: {fileID: 1940011509}
   ammo: {fileID: 7073996934030573405, guid: ced93bdd3dc81544295b6df08456283f, type: 3}
   CountDownPickPowerUp: {fileID: 1343525762}
   pauseScreen: {fileID: 597692201}
   PoinText: {fileID: 1066877943}
-  PointEarn: 100
+  PointEarn: 150
   EnemyKill: 0
   GameOverScreen: {fileID: 1369792777}
   Score: {fileID: 184282214}
-  Bossssss: {fileID: 8478131796885084545, guid: 21e58db00f6dd9541a1914f0033e6689, type: 3}
+  Bossssss: {fileID: 8478131796885084545, guid: cee615e62d32960459d517ae6bca5900, type: 3}
   BGM: {fileID: 1193581587}
-  AmmoSpawnTime: 10
+  AmmoSpawnTime: 15
   IsThereIsABoos: 0
   IsChoosingPower: 0
   timer: 0
@@ -12595,7 +12595,7 @@ MonoBehaviour:
   FireRate: 1
   Speed: 2
   Jumps: 1
-  PointMinus: 10
+  PointMinus: 15
   Dash: 1
 --- !u!4 &1406680396
 Transform:
@@ -12735,7 +12735,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1acbf85da9c7fe4439ab924e82c49b02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnInterval: 2
+  SpawnInterval: 1
   enemy:
   - {fileID: 3539542491546819821, guid: 13b4240fd7909894f984345a39b13b6e, type: 3}
   - {fileID: 395573620041438885, guid: 81c5b1d2ae0ce6e4c9ef8ef9f037140b, type: 3}

@@ -182,4 +182,9 @@ public class GameManager : MonoBehaviour
             Point += PointEarn;
         }
     }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene(0);
+    }
 }

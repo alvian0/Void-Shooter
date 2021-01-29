@@ -96,7 +96,7 @@ public class PlayerBullets : MonoBehaviour
             {
                 Camera.main.transform.parent.transform.GetComponent<Animator>().SetTrigger("Shake");
                 GameObject.Find("EDie").GetComponent<AudioSource>().Play();
-                //Instantiate(collision.gameObject.GetComponent<Enemy2>().DeadEffect, collision.transform.position, Quaternion.identity);
+                Instantiate(collision.gameObject.GetComponent<Enemy3>().DeadEffect, collision.transform.position, Quaternion.identity);
                 manager.GetPoint();
                 manager.EnemyKill += 1;
                 player.TotalAmmo += 10;

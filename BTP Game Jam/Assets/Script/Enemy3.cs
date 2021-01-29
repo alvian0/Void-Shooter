@@ -8,6 +8,7 @@ public class Enemy3 : MonoBehaviour
     public float HP = 20;
     public float Speed = 10;
     public float Demage = 5;
+    public GameObject DeadEffect;
 
     Transform player;
 

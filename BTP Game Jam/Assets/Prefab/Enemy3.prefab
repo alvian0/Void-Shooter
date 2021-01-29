@@ -540,6 +540,7 @@ MonoBehaviour:
   HP: 20
   Speed: 10
   Demage: 5
+  DeadEffect: {fileID: 6925148827833551907, guid: cc1bda7e68452a941aa040fa263c9ed0, type: 3}
 --- !u!60 &5908127599365266433
 PolygonCollider2D:
   m_ObjectHideFlags: 0
